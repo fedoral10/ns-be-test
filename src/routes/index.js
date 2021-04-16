@@ -1,9 +1,10 @@
 const express = require('express')
+const { tokenVerifyMiddleware } = require('../middlewares/jwt')
 const router = express.Router()
 const login = require('./login')
-const apitest = require('./apitest')
+const mainApi = require('./mainApi')
 
 router.use('/auth', login)
-router.use('/', apitest)
+router.use('/', tokenVerifyMiddleware, mainApi)
 
 module.exports = router
