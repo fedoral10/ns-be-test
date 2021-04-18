@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken')
-const { badRequest } = require('../../shared/responseBuilder')
+const { badRequest, customResponse } = require('../../shared/responseBuilder')
 
 const tokenVerify = (token) => {
     var decoded = jwt.verify(token, process.env.SECRET)
@@ -15,7 +15,7 @@ const tokenVerifyMiddleware = async (req, res, next) => {
     const arr = typeof req.headers.authorization === 'string' ? req.headers.authorization.split(' ') : []
 
     const token = arr.length > 1 ? arr[1] : null
-    
+
     // Verificar que venga el token
     if (!token) {
         badRequest(res, { message: 'No ha proveido token' })
@@ -29,7 +29,7 @@ const tokenVerifyMiddleware = async (req, res, next) => {
         next()
     } catch (error) {
         // console.error(error)
-        badRequest(res, 'El token es invalido o ha expirado')
+        customResponse(res, { name: 'error', message: 'El token es invalido o ha expirado' }, 401)
     }
 }
 

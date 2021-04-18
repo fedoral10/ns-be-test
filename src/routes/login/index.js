@@ -8,16 +8,17 @@ router.post('/login', async (req, res) => {
         const token = await userManageApi.login(req.body.username, req.body.password)
         ok(res, token)
     } catch (err) {
-        internalServerError(res, 'Error al iniciar sesion')
+        internalServerError(res, err.message)
     }
 })
 
 router.post('/signup', async (req, res) => {
     try {
-        const usr = await userManageApi.signUp(req.body.username, req.body.password)
-        ok(res, usr)
+        await userManageApi.signUp(req.body.username, req.body.password)
+        ok(res, 'Usuario creado correctamente')
     } catch (err) {
-        internalServerError(res, 'Error al crear el usuario')
+        console.log(err.message)
+        internalServerError(res, err.message)
     }
 })
 

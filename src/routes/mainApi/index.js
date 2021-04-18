@@ -1,5 +1,5 @@
 const express = require('express')
-const { sync, getStatistics, postStatistics } = require('../../controllers/mainApi')
+const { sync, getStatistics, postStatistics, getCountries } = require('../../controllers/mainApi')
 const { ok, internalServerError } = require('../../shared/responseBuilder')
 const router = express.Router()
 
@@ -24,6 +24,12 @@ router.post('/statistics/:country', async (req, res) => {
 router.get('/sync', async (req, res) => {
     sync()
         .then(salida => ok(res, 'Se ha sincronizado'))
+        .catch(_ => internalServerError(res, 'Error en servidor'))
+})
+
+router.get('/countries', async (req, res) => {
+    getCountries()
+        .then(salida => ok(res, salida))
         .catch(_ => internalServerError(res, 'Error en servidor'))
 })
 

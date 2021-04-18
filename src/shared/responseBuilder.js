@@ -8,6 +8,13 @@ const getJsonBase = () => {
     )
 }
 
+module.exports.customResponse = (res, {name, message}, code) => {
+    let obj = getJsonBase()
+    obj[name] = message
+    obj.code = code
+    res.status(400).send(obj)
+}
+
 module.exports.badRequest = (res, errors) => {
     let obj = getJsonBase()
     obj.errors = errors

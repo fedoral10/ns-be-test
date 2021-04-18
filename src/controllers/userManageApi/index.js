@@ -4,6 +4,20 @@ const { hashMessageSalted, isPasswordCorrectSalted } = require('../../shared/cry
 
 const signUp = async (username, password) => {
     try {
+        const regx = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{6,}$/
+        const re = new RegExp(regx)
+
+        // Password lenght etc etc
+        if (!re.test(password)) {
+            throw new Error(`Password must have a min. 6 chars. a capital letter and a number`)
+        }
+
+        // Verify if user exist
+        const exist = await user.findOne({ username })
+        if (exist) {
+            throw new Error(`There is a user with that login :(`)
+        }
+
         const model = {
             username,
             password: await hashMessageSalted(password)
@@ -13,7 +27,7 @@ const signUp = async (username, password) => {
         return usr
     } catch (err) {
         console.log(err)
-        return err
+        throw err
     }
 }
 
@@ -22,14 +36,14 @@ const login = async (username, password) => {
         // verificar que el usuario exista
         const usr = await user.findOne({ username })
         if (!usr) {
-            return 'Usuario no existe'
+            throw new Error('Usuario no existe')
         }
 
         // verificar si el password es correcto
         const verifyPassword = await isPasswordCorrectSalted(usr.password, password)
 
         if (!verifyPassword) {
-            return 'Contraseña incorrecta'
+            throw new Error('Contraseña incorrecta')
         }
 
         // retornar el token
@@ -40,7 +54,7 @@ const login = async (username, password) => {
         return sign(payload, process.env.SECRET, { expiresIn: process.env.EXPIRESIN || '30s' })
     } catch (err) {
         console.log(err)
-        return err
+        throw err
     }
 }
 
